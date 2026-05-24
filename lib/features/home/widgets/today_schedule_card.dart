@@ -608,15 +608,6 @@ class TodayScheduleCard extends StatelessWidget {
               color: AppColors.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Waktunya bersantai & memulihkan energi! ☕',
-            textAlign: TextAlign.center,
-            style: AppTypography.bodyMedium.copyWith(
-              fontSize: 13,
-              color: AppColors.outline,
-            ),
-          ),
         ],
       ),
     );

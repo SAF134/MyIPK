@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
-import '../../shared/widgets/app_top_bar.dart';
 import '../../core/database/static_database.dart';
 import 'edit_profile_screen.dart';
 import 'grading_scale_screen.dart';
@@ -136,7 +135,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.creamBackground,
-      appBar: const AppTopBar(title: 'Pengaturan'),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          color: AppColors.onSurfaceVariant,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Pengaturan',
+          style: AppTypography.titleLarge.copyWith(
+            color: AppColors.primary,
+          ),
+        ),
+        centerTitle: false,
+      ),
       body: CustomScrollView(
         slivers: [
 
@@ -187,66 +202,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         children: [
           // ── Avatar ──────────────────────────────────────
-          GestureDetector(
-            onTap: _navigateToEditProfile,
-            child: Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primaryFixed,
-                    border: Border.all(
-                      color: AppColors.primaryFixed,
-                      width: 4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: hasPhoto
-                        ? Image.memory(
-                            base64Decode(_db.profilePicBase64!),
-                            fit: BoxFit.cover,
-                            width: 96,
-                            height: 96,
-                          )
-                        : const Center(
-                            child: Icon(
-                              Icons.person,
-                              size: 48,
-                              color: AppColors.onPrimaryFixedVariant,
-                            ),
-                          ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.edit,
-                    size: 12,
-                    color: Colors.white,
-                  ),
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primaryFixed,
+              border: Border.all(
+                color: AppColors.primaryFixed,
+                width: 4,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
+            ),
+            child: ClipOval(
+              child: hasPhoto
+                  ? Image.memory(
+                      base64Decode(_db.profilePicBase64!),
+                      fit: BoxFit.cover,
+                      width: 96,
+                      height: 96,
+                    )
+                  : const Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 48,
+                        color: AppColors.onPrimaryFixedVariant,
+                      ),
+                    ),
             ),
           ),
 

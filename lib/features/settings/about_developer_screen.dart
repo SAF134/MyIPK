@@ -68,11 +68,12 @@ class AboutDeveloperScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.person,
-                        size: 48,
-                        color: AppColors.primary,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/akmal.jpg',
+                        fit: BoxFit.cover,
+                        width: 100,
+                        height: 100,
                       ),
                     ),
                   ),

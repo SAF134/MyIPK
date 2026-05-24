@@ -5,6 +5,7 @@ import '../../core/database/static_database.dart';
 import 'widgets/today_schedule_card.dart';
 import 'widgets/gpa_summary_card.dart';
 import 'widgets/upcoming_tasks_card.dart';
+import 'widgets/academic_stats_card.dart';
 
 /// Beranda (Home) screen — the main dashboard of MyIPK.
 ///
@@ -31,6 +32,8 @@ class HomeScreen extends StatelessWidget {
                 const TodayScheduleCard(),
                 const SizedBox(height: 24),
                 const UpcomingTasksCard(),
+                const SizedBox(height: 24),
+                const AcademicStatsCard(),
               ]),
             ),
           ),

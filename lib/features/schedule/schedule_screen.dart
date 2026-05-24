@@ -168,31 +168,28 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       appBar: const AppTopBar(title: 'Jadwal'),
       body: CustomScrollView(
         slivers: [
-
-          // ── Content ──────────────────────────────────────
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // ── Add Schedule Form ─────────────────────────
-                _buildAddScheduleForm(),
-
-                const SizedBox(height: 32),
-
-                // ── Day selector ──────────────────────────────
-                _buildDaySelector(),
-
-                const SizedBox(height: 24),
-
-                // ── Today's Schedule Header ───────────────────
-                _buildTodayScheduleHeader(),
-
-                const SizedBox(height: 12),
-
-                // ── Today's Schedule Cards List ───────────────
-                _buildTodayScheduleList(),
-              ]),
+          // ── Top Content ────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildAddScheduleForm(),
+                  const SizedBox(height: 32),
+                  _buildDaySelector(),
+                  const SizedBox(height: 24),
+                  _buildTodayScheduleHeader(),
+                  const SizedBox(height: 12),
+                ],
+              ),
             ),
+          ),
+
+          // ── Schedule List (Lazy Loaded) ─────────────────────
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+            sliver: _buildTodayScheduleSliverList(),
           ),
         ],
       ),
@@ -556,19 +553,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  Widget _buildTodayScheduleList() {
+  Widget _buildTodayScheduleSliverList() {
     final selectedDayName = _days[_selectedDay];
     final daySchedules = StaticDatabase().getSchedulesByDay(selectedDayName);
 
     if (daySchedules.isEmpty) {
-      return EmptyStateWidget(
-        message: 'Tidak ada jadwal hari $selectedDayName',
+      return SliverToBoxAdapter(
+        child: EmptyStateWidget(
+          message: 'Tidak ada jadwal hari $selectedDayName',
+        ),
       );
     }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return SliverList.separated(
       itemCount: daySchedules.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {

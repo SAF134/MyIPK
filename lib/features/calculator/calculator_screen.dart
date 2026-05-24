@@ -254,7 +254,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     const SizedBox(height: 4),
                     _buildDropdown(
                       value: _selectedSemester,
-                      items: ['1', '2', '3', '4', '5', '6', '7', '8'],
+                      items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'],
                       displayText: (v) => v,
                       onChanged: (v) => setState(() => _selectedSemester = v!),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -272,7 +272,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     const SizedBox(height: 4),
                     _buildDropdown(
                       value: _selectedSks,
-                      items: ['1', '2', '3', '4'],
+                      items: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
                       displayText: (v) => v,
                       onChanged: (v) => setState(() => _selectedSks = v!),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -352,12 +352,25 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Matkul Semester $semVal',
-                style: AppTypography.titleLarge.copyWith(
-                  color: AppColors.onSurface,
-                  fontSize: 18,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Matkul Semester $semVal',
+                    style: AppTypography.titleLarge.copyWith(
+                      color: AppColors.onSurface,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Total: ${StaticDatabase().getSksBySemester(semVal)} SKS',
+                    style: AppTypography.labelMedium.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -384,102 +397,104 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
             )
           else
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: courses.length,
-              separatorBuilder: (_, _) => const Divider(height: 16),
-              itemBuilder: (context, index) {
-                final course = courses[index];
-                return Slidable(
-                  key: ValueKey(course.id),
-                  startActionPane: ActionPane(
-                    motion: const ScrollMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) => _showEditCourseBottomSheet(course),
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.onPrimary,
-                        icon: Icons.edit,
-                        label: 'Edit',
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ],
-                  ),
-                  endActionPane: ActionPane(
-                    motion: const ScrollMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) {
-                          _confirmDelete(
-                            title: 'Hapus Mata Kuliah',
-                            content: 'Apakah Anda yakin ingin menghapus mata kuliah ${course.name}?',
-                            onConfirm: () {
-                              setState(() {
-                                StaticDatabase().deleteCourse(course.id);
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('${course.name} berhasil dihapus.'),
-                                  backgroundColor: AppColors.error,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        backgroundColor: AppColors.error,
-                        foregroundColor: AppColors.onError,
-                        icon: Icons.delete,
-                        label: 'Hapus',
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.getGradeColor(course.grade).withValues(alpha: 0.12),
+            ClipRect(
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: courses.length,
+                separatorBuilder: (_, _) => const Divider(height: 16),
+                itemBuilder: (context, index) {
+                  final course = courses[index];
+                  return Slidable(
+                    key: ValueKey(course.id),
+                    startActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) => _showEditCourseBottomSheet(course),
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.onPrimary,
+                          icon: Icons.edit,
+                          label: 'Edit',
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Center(
-                          child: Text(
-                            course.grade,
-                            style: AppTypography.bodyLarge.copyWith(
-                              color: AppColors.getGradeColor(course.grade),
-                              fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) {
+                            _confirmDelete(
+                              title: 'Hapus Mata Kuliah',
+                              content: 'Apakah Anda yakin ingin menghapus mata kuliah ${course.name}?',
+                              onConfirm: () {
+                                setState(() {
+                                  StaticDatabase().deleteCourse(course.id);
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${course.name} berhasil dihapus.'),
+                                    backgroundColor: AppColors.error,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          backgroundColor: AppColors.error,
+                          foregroundColor: AppColors.onError,
+                          icon: Icons.delete,
+                          label: 'Hapus',
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.getGradeColor(course.grade).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(
+                              course.grade,
+                              style: AppTypography.bodyLarge.copyWith(
+                                color: AppColors.getGradeColor(course.grade),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              course.name,
-                              style: AppTypography.bodyLarge.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.onSurface,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                course.name,
+                                style: AppTypography.bodyLarge.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.onSurface,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${course.sks} SKS',
-                              style: AppTypography.labelSmall.copyWith(
-                                color: AppColors.onSurfaceVariant,
+                              const SizedBox(height: 2),
+                              Text(
+                                '${course.sks} SKS',
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: AppColors.onSurfaceVariant,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
         ],
       ),
@@ -594,7 +609,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                 ),
                                 style: AppTypography.bodyMedium.copyWith(color: AppColors.onSurface),
-                                items: List.generate(8, (i) => i + 1)
+                                items: List.generate(14, (i) => i + 1)
                                     .map(
                                       (s) => DropdownMenuItem(
                                         value: s,
@@ -665,10 +680,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                             return;
                           }
 
-                          if (sks <= 0) {
+                          if (sks < 0 || sks > 8) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('SKS harus lebih besar dari 0!'),
+                                content: Text('SKS harus antara 0 dan 8!'),
                                 backgroundColor: AppColors.error,
                               ),
                             );
@@ -723,7 +738,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       height: 44,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: 8,
+        itemCount: 14,
         separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final semesterNum = index + 1;

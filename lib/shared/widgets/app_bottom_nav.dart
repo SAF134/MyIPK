@@ -19,7 +19,6 @@ class AppBottomNav extends StatelessWidget {
     _NavItem(icon: Icons.analytics_outlined, activeIcon: Icons.analytics, label: 'IPK'),
     _NavItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month, label: 'Jadwal'),
     _NavItem(icon: Icons.assignment_outlined, activeIcon: Icons.assignment, label: 'Tugas'),
-    _NavItem(icon: Icons.settings_outlined, activeIcon: Icons.settings, label: 'Pengaturan'),
   ];
 
   @override

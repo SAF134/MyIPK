@@ -3,7 +3,6 @@ import '../features/home/home_screen.dart';
 import '../features/calculator/calculator_screen.dart';
 import '../features/schedule/schedule_screen.dart';
 import '../features/task/task_screen.dart';
-import '../features/settings/settings_screen.dart';
 import 'widgets/app_bottom_nav.dart';
 
 /// Main application shell that hosts the [BottomNavigationBar]
@@ -25,7 +24,6 @@ class _AppShellState extends State<AppShell> {
       const CalculatorScreen(),
       const ScheduleScreen(),
       const TaskScreen(),
-      const SettingsScreen(),
     ];
 
     return Scaffold(

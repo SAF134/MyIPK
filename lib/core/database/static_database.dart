@@ -154,9 +154,9 @@ class StaticDatabase {
   }
 
   // ── Profile Getters & Saving ────────────────────────────────────
-  String get profileName => _profileBox.get(_kProfileName, defaultValue: 'Budi Sudarsono') as String;
-  String get profileUniv => _profileBox.get(_kProfileUniv, defaultValue: 'Universitas Gadjah Mada') as String;
-  String get profileMajor => _profileBox.get(_kProfileMajor, defaultValue: 'Teknik Informatika') as String;
+  String get profileName => _profileBox.get(_kProfileName, defaultValue: 'Pengguna') as String;
+  String get profileUniv => _profileBox.get(_kProfileUniv, defaultValue: 'Perguruan Tinggi') as String;
+  String get profileMajor => _profileBox.get(_kProfileMajor, defaultValue: 'Program Studi') as String;
   String? get profilePicBase64 => _profileBox.get(_kProfilePic) as String?;
 
   Future<void> saveProfile({

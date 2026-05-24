@@ -5,6 +5,8 @@ import '../../shared/widgets/app_top_bar.dart';
 import '../../core/database/static_database.dart';
 import '../../shared/widgets/empty_state_widget.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:table_calendar/table_calendar.dart';
+
 /// Tugas (Task) screen — CRUD for student assignments.
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -18,6 +20,9 @@ class _TaskScreenState extends State<TaskScreen> {
   final _descController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedCalendarDay = DateTime.now();
 
   @override
   void dispose() {
@@ -27,6 +32,12 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   // ── Helpers ─────────────────────────────────────────────────────────
+
+  List<TaskItem> _getTasksForDay(DateTime day) {
+    return StaticDatabase().getTasks().where((task) {
+      return isSameDay(task.deadline, day);
+    }).toList();
+  }
 
   String _formatDeadlineRemaining(DateTime deadline) {
     final now = DateTime.now();
@@ -230,19 +241,86 @@ class _TaskScreenState extends State<TaskScreen> {
       appBar: const AppTopBar(title: 'Tugas'),
       body: CustomScrollView(
         slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildAddTaskForm(),
-                const SizedBox(height: 32),
-                _buildTaskListHeader(),
-                const SizedBox(height: 12),
-                _buildTaskList(),
-              ]),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildAddTaskForm(),
+                  const SizedBox(height: 32),
+                  _buildCalendar(),
+                  const SizedBox(height: 32),
+                  _buildTaskListHeader(),
+                  const SizedBox(height: 12),
+                ],
+              ),
             ),
           ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+            sliver: _buildTaskSliverList(),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCalendar() {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryContainer.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TableCalendar<TaskItem>(
+        firstDay: DateTime.utc(2020, 1, 1),
+        lastDay: DateTime.utc(2030, 12, 31),
+        focusedDay: _focusedDay,
+        selectedDayPredicate: (day) => isSameDay(_selectedCalendarDay, day),
+        onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            _selectedCalendarDay = selectedDay;
+            _focusedDay = focusedDay;
+          });
+        },
+        eventLoader: _getTasksForDay,
+        calendarFormat: CalendarFormat.month,
+        availableCalendarFormats: const {
+          CalendarFormat.month: 'Month',
+        },
+        headerStyle: HeaderStyle(
+          titleCentered: true,
+          formatButtonVisible: false,
+          titleTextStyle: AppTypography.titleLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.onSurface),
+          leftChevronIcon: const Icon(Icons.chevron_left, color: AppColors.primary),
+          rightChevronIcon: const Icon(Icons.chevron_right, color: AppColors.primary),
+        ),
+        calendarStyle: CalendarStyle(
+          outsideDaysVisible: false,
+          todayDecoration: const BoxDecoration(
+            color: AppColors.primaryContainer,
+            shape: BoxShape.circle,
+          ),
+          todayTextStyle: const TextStyle(color: AppColors.onPrimaryContainer, fontWeight: FontWeight.bold),
+          selectedDecoration: const BoxDecoration(
+            color: AppColors.primary,
+            shape: BoxShape.circle,
+          ),
+          selectedTextStyle: const TextStyle(color: AppColors.onPrimary, fontWeight: FontWeight.bold),
+          markerDecoration: const BoxDecoration(
+            color: AppColors.error,
+            shape: BoxShape.circle,
+          ),
+        ),
       ),
     );
   }
@@ -290,7 +368,7 @@ class _TaskScreenState extends State<TaskScreen> {
           TextField(
             controller: _descController,
             maxLines: 2,
-            decoration: _inputDecoration('Contoh: Kerjakan soal bab 5'),
+            decoration: _inputDecoration('Contoh: Kuis di LMS'),
           ),
           const SizedBox(height: 16),
 
@@ -415,36 +493,61 @@ class _TaskScreenState extends State<TaskScreen> {
   // ── Task List ───────────────────────────────────────────────────────
 
   Widget _buildTaskListHeader() {
+    final title = _selectedCalendarDay != null
+        ? 'Daftar Tugas (${_formatDate(_selectedCalendarDay!)})'
+        : 'Daftar Tugas';
+        
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         children: [
           const Icon(Icons.assignment_rounded, size: 20, color: AppColors.primary),
           const SizedBox(width: 8),
-          Text(
-            'Daftar Tugas',
-            style: AppTypography.titleLarge.copyWith(
-              color: AppColors.onSurface,
+          Expanded(
+            child: Text(
+              title,
+              style: AppTypography.titleLarge.copyWith(
+                color: AppColors.onSurface,
+              ),
             ),
           ),
+          if (_selectedCalendarDay != null)
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedCalendarDay = null;
+                });
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text('Lihat Semua'),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildTaskList() {
-    final tasks = StaticDatabase().getTasks().toList()
+  Widget _buildTaskSliverList() {
+    var tasks = StaticDatabase().getTasks().toList()
       ..sort((a, b) => a.deadline.compareTo(b.deadline));
 
+    if (_selectedCalendarDay != null) {
+      tasks = tasks.where((t) => isSameDay(t.deadline, _selectedCalendarDay)).toList();
+    }
+
     if (tasks.isEmpty) {
-      return const EmptyStateWidget(
-        message: 'Belum ada tugas.',
+      return const SliverToBoxAdapter(
+        child: EmptyStateWidget(
+          message: 'Tidak ada tugas.',
+        ),
       );
     }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return SliverList.separated(
       itemCount: tasks.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) => _buildTaskCard(tasks[index]),
