@@ -31,33 +31,36 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       // ── Profile photo on the left ──
       leadingWidth: 64,
-      leading: Container(
-        width: 40,
-        height: 40,
-        margin: const EdgeInsets.only(left: 20),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: AppColors.primaryContainer,
-            width: 2,
+      leading: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          width: 40,
+          height: 40,
+          margin: const EdgeInsets.only(left: 20),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppColors.primaryContainer,
+              width: 2,
+            ),
+            color: AppColors.primaryContainer.withValues(alpha: 0.2),
           ),
-          color: AppColors.primaryContainer.withValues(alpha: 0.2),
-        ),
-        child: ClipOval(
-          child: hasPhoto
-              ? Image.memory(
-                  base64Decode(db.profilePicBase64!),
-                  fit: BoxFit.cover,
-                  width: 40,
-                  height: 40,
-                )
-              : const Center(
-                  child: Icon(
-                    Icons.person,
-                    size: 20,
-                    color: AppColors.primaryContainer,
+          child: ClipOval(
+            child: hasPhoto
+                ? Image.memory(
+                    base64Decode(db.profilePicBase64!),
+                    fit: BoxFit.cover,
+                    width: 40,
+                    height: 40,
+                  )
+                : const Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 20,
+                      color: AppColors.primaryContainer,
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
       // ── Title ──

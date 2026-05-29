@@ -218,8 +218,26 @@ class StaticDatabase {
 
   // ── Calculations ────────────────────────────────────────────────
 
+  // Helper method: Groups courses by name and keeps only the highest grade
+  List<CourseItem> get _uniqueHighestCourses {
+    final Map<String, CourseItem> bestCourses = {};
+    for (var course in _coursesBox.values) {
+      // Normalize name to handle slight case differences (e.g. "Kalkulus" vs "kalkulus")
+      final key = course.name.trim().toLowerCase();
+      if (bestCourses.containsKey(key)) {
+        if (course.gradePoint > bestCourses[key]!.gradePoint) {
+          bestCourses[key] = course;
+        }
+      } else {
+        bestCourses[key] = course;
+      }
+    }
+    return bestCourses.values.toList();
+  }
+
   int get totalSks {
-    return _coursesBox.values.fold(0, (sum, item) => sum + item.sks);
+    // Only sum SKS from unique/highest courses so repeated courses aren't counted twice
+    return _uniqueHighestCourses.fold(0, (sum, item) => sum + item.sks);
   }
 
   int get totalCourses {
@@ -227,8 +245,9 @@ class StaticDatabase {
   }
 
   double get overallGpa {
-    final courses = _coursesBox.values.toList();
+    final courses = _uniqueHighestCourses;
     if (courses.isEmpty) return 0.0;
+    
     double weightedPoints = 0.0;
     int totalSksCount = 0;
     for (var course in courses) {

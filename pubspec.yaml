@@ -33,9 +33,6 @@ flutter_launcher_icons:
   image_path: "assets/images/Logo_MyIPK.png"
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/images/Logo_MyIPK.png"
-  web:
-    generate: true
-    image_path: "assets/images/Logo_MyIPK.png"
 
 flutter:
   uses-material-design: true
